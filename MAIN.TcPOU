@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="MAIN" Id="{fb19dc3b-8e79-4d2e-a250-880528b3d535}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	bCoinEnter 	: BOOL;
+	bManual		: BOOL;
+	bAuto		: BOOL;
+	bLedPower	: BOOL;
+
+	bPlainWater	: BOOL:=TRUE;
+	bLedW		: BOOL;
+	
+	bShampoo	: BOOL:=TRUE;
+	bLedS		: BOOL;
+
+    bWax		: BOOL:=TRUE;
+	bLedWx		: BOOL;
+	
+	tRunningTimeM	: TIME:=T#9S;
+	tTimer 		: TOF;	
+	
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF bCoinEnter THEN
+	
+	//While process chosen as manual mode
+	IF bManual THEN
+		
+		tTimer(IN:=bPlainWater AND bShampoo AND bWax,PT:= tRunningTimeM );
+		//cCounter(CU:=tTimer.Q, RESET:= bCoinEnter, PV:=CounterPV );
+		bLedPower		:= tTimer.Q;
+	
+		
+		IF NOT bPlainWater THEN	  
+		   bLedW		:= tTimer.Q;
+    	   bShampoo		:= TRUE;
+	   	   bWax			:= TRUE;
+	 
+       ELSIF NOT  bShampoo THEN	   
+	   	  bLedS			:= tTimer.Q;  
+	  	  bPlainWater	:= TRUE;
+	      bWax			:= TRUE;
+		  
+   	  ELSIF NOT bWax THEN   	   
+	      bLedWx		:= tTimer.Q;  
+	      bShampoo		:= TRUE;
+	      bPlainWater	:= TRUE;
+
+      END_IF
+  
+      IF NOT tTimer.Q THEN
+	    bCoinEnter 		:=FALSE;
+	   	bPlainWater		:=TRUE;
+		bShampoo		:=TRUE;
+    	bWax			:=TRUE;
+		bManual			:=FALSE;
+		tTimer(IN:=TRUE);
+		
+		  
+      END_IF
+	   
+	END_IF 
+	
+	
+	
+	
+	//While process chosen as automatic mode
+	IF bAuto THEN
+		
+		tTimer(IN:=FALSE,PT:= tRunningTimeM );
+		bLedPower		:= tTimer.Q;
+		
+		IF tTimer.ET <= T#3S THEN
+			bLedW			:= tTimer.Q;
+			
+        ELSIF tTimer.ET <= T#6S THEN
+			bLedS			:= tTimer.Q;
+			bLedW			:= FALSE;
+ 
+			
+		ELSIF tTimer.ET <= T#9S THEN
+			bLedWx			:= tTimer.Q;
+			bLedW			:= FALSE;
+			bLedS			:= FALSE;
+			
+			
+			
+		END_IF
+		
+		
+		IF NOT tTimer.Q THEN
+	   	 	bCoinEnter 		:=FALSE;
+			bLedW			:=FALSE;
+			bLedS			:=FALSE;
+            bLedWx			:=FALSE;
+			bAuto			:=FALSE;
+			tTimer(IN:=TRUE);
+        END_IF
+		
+	END_IF
+	
+END_IF
+
+
+
+
+
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="29" Count="0" />
+      <LineId Id="257" Count="0" />
+      <LineId Id="205" Count="0" />
+      <LineId Id="146" Count="0" />
+      <LineId Id="304" Count="0" />
+      <LineId Id="155" Count="0" />
+      <LineId Id="327" Count="0" />
+      <LineId Id="262" Count="0" />
+      <LineId Id="347" Count="0" />
+      <LineId Id="302" Count="0" />
+      <LineId Id="181" Count="3" />
+      <LineId Id="227" Count="0" />
+      <LineId Id="186" Count="3" />
+      <LineId Id="228" Count="0" />
+      <LineId Id="191" Count="6" />
+      <LineId Id="199" Count="4" />
+      <LineId Id="255" Count="0" />
+      <LineId Id="307" Count="0" />
+      <LineId Id="306" Count="0" />
+      <LineId Id="300" Count="0" />
+      <LineId Id="180" Count="0" />
+      <LineId Id="260" Count="0" />
+      <LineId Id="149" Count="0" />
+      <LineId Id="236" Count="1" />
+      <LineId Id="258" Count="1" />
+      <LineId Id="206" Count="1" />
+      <LineId Id="303" Count="0" />
+      <LineId Id="213" Count="0" />
+      <LineId Id="261" Count="0" />
+      <LineId Id="214" Count="1" />
+      <LineId Id="229" Count="1" />
+      <LineId Id="223" Count="0" />
+      <LineId Id="231" Count="0" />
+      <LineId Id="352" Count="0" />
+      <LineId Id="351" Count="0" />
+      <LineId Id="233" Count="0" />
+      <LineId Id="225" Count="0" />
+      <LineId Id="235" Count="0" />
+      <LineId Id="354" Count="0" />
+      <LineId Id="356" Count="0" />
+      <LineId Id="355" Count="0" />
+      <LineId Id="353" Count="0" />
+      <LineId Id="234" Count="0" />
+      <LineId Id="217" Count="0" />
+      <LineId Id="239" Count="0" />
+      <LineId Id="245" Count="0" />
+      <LineId Id="247" Count="1" />
+      <LineId Id="265" Count="0" />
+      <LineId Id="264" Count="0" />
+      <LineId Id="252" Count="0" />
+      <LineId Id="357" Count="0" />
+      <LineId Id="268" Count="0" />
+      <LineId Id="246" Count="0" />
+      <LineId Id="212" Count="0" />
+      <LineId Id="209" Count="0" />
+      <LineId Id="256" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="273" Count="3" />
+      <LineId Id="282" Count="0" />
+      <LineId Id="279" Count="0" />
+      <LineId Id="272" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
